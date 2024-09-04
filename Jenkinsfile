@@ -2,41 +2,35 @@ pipeline {
     agent any
 
     stages {
-        stage('Hello') {
+        stage('Git Checkout') {
             steps {
-                echo 'Hello World'
+                git branch: 'main', url: 'https://github.com/shugilbert/abnb-infrastructure.git'
+                sh 'ls'
             }
         }
-        
-        stage('Clone Repository') {
+
+        stage('Verify Terraform') {
             steps {
-                script {
-                    git branch: 'main', credentialsId: 'github-token', url: 'https://github.com/shugilbert/abnb-infrastructure.git'
-                }
+                sh 'ls'
             }
         }
-        
-        stage('Verify Terraform Version') {
-            steps {
-                sh 'terraform --version'
-            }
-        }
-        
+
         stage('Terraform Init') {
             steps {
                 sh 'terraform init'
             }
         }
-        
+
         stage('Terraform Plan') {
             steps {
                 sh 'terraform plan'
             }
         }
-        
+
         stage('Terraform Apply') {
             steps {
-                sh 'terraform apply -auto-approve'
+                // The correct option is `-auto-approve` not `-auto-aprove`
+                sh 'terraform destroy -auto-approve'
             }
         }
     }
