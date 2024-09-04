@@ -1,22 +1,42 @@
 pipeline {
     agent any
+
     stages {
-        stage('Build') {
+        stage('Hello') {
             steps {
-                echo 'Building...'
-                // Your build commands here
+                echo 'Hello World'
             }
         }
-        stage('Test') {
+        
+        stage('Clone Repository') {
             steps {
-                echo 'Testing...'
-                // Your test commands here
+                script {
+                    git branch: 'main', credentialsId: 'github-token', url: 'https://github.com/shugilbert/abnb-infrastructure.git'
+                }
             }
         }
-        stage('Deploy') {
+        
+        stage('Verify Terraform Version') {
             steps {
-                echo 'Deploying...'
-                // Your deploy commands here
+                sh 'terraform --version'
+            }
+        }
+        
+        stage('Terraform Init') {
+            steps {
+                sh 'terraform init'
+            }
+        }
+        
+        stage('Terraform Plan') {
+            steps {
+                sh 'terraform plan'
+            }
+        }
+        
+        stage('Terraform Apply') {
+            steps {
+                sh 'terraform apply -auto-approve'
             }
         }
     }
